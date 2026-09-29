@@ -34,9 +34,23 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/upload', uploadRoutes);
 
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
+import path from 'path';
+
+const __dirname = path.resolve();
+
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from the React frontend app
+  app.use(express.static(path.join(__dirname, '../client/dist')));
+
+  // Anything that doesn't match the API routes should be routed to the React frontend
+  app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, '../client', 'dist', 'index.html'))
+  );
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running...');
+  });
+}
 
 app.use(notFound);
 app.use(errorHandler);

@@ -1,0 +1,14 @@
+{
+  "name": "my-portfolio-root",
+  "version": "1.0.0",
+  "description": "Root package for deployment",
+  "scripts": {
+    "start": "npm run start --prefix server",
+    "build": "npm run build --prefix client",
+    "install-all": "npm install --prefix server && npm install --prefix client",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm run install-all && npm run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
