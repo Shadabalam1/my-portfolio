@@ -7,7 +7,7 @@ const educationSchema = new mongoose.Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date },
   description: { type: String },
-  order: { type: Number, default: 0 },
+  order: { type: Number, default: 0, index: true },
 }, { timestamps: true });
 
 const Education = mongoose.model('Education', educationSchema);

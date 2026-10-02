@@ -1,24 +1,31 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Layouts
 import PublicLayout from './layouts/PublicLayout';
-import AdminLayout from './layouts/AdminLayout';
+const AdminLayout = lazy(() => import('./layouts/AdminLayout'));
 
 // Public Pages
 import Home from './pages/public/Home';
-import ProjectDetails from './pages/public/ProjectDetails';
+import About from './pages/public/About';
+import Skills from './pages/public/Skills';
+import Projects from './pages/public/Projects';
+import Experience from './pages/public/Experience';
+import Education from './pages/public/Education';
+import Contact from './pages/public/Contact';
+const ProjectDetails = lazy(() => import('./pages/public/ProjectDetails'));
 
 // Admin Pages
-import Login from './pages/admin/Login';
-import Dashboard from './pages/admin/Dashboard';
-import ManageProfile from './pages/admin/ManageProfile';
-import ManageSkills from './pages/admin/ManageSkills';
-import ManageProjects from './pages/admin/ManageProjects';
-import ManageExperience from './pages/admin/ManageExperience';
-import ManageEducation from './pages/admin/ManageEducation';
-import ManageMessages from './pages/admin/ManageMessages';
-import Settings from './pages/admin/Settings';
+const Login = lazy(() => import('./pages/admin/Login'));
+const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
+const ManageProfile = lazy(() => import('./pages/admin/ManageProfile'));
+const ManageSkills = lazy(() => import('./pages/admin/ManageSkills'));
+const ManageProjects = lazy(() => import('./pages/admin/ManageProjects'));
+const ManageExperience = lazy(() => import('./pages/admin/ManageExperience'));
+const ManageEducation = lazy(() => import('./pages/admin/ManageEducation'));
+const ManageMessages = lazy(() => import('./pages/admin/ManageMessages'));
+const Settings = lazy(() => import('./pages/admin/Settings'));
 
 const ProtectedRoute = ({ children }) => {
   const { adminInfo, loading } = useAuth();
@@ -32,6 +39,12 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+const SuspenseWrapper = ({ children }) => (
+  <Suspense fallback={<div className="flex h-screen items-center justify-center text-gray-500">Loading...</div>}>
+    {children}
+  </Suspense>
+);
+
 function App() {
   return (
     <AuthProvider>
@@ -40,26 +53,32 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />
-            <Route path="project/:slug" element={<ProjectDetails />} />
+            <Route path="about" element={<About />} />
+            <Route path="skills" element={<Skills />} />
+            <Route path="projects" element={<Projects />} />
+            <Route path="experience" element={<Experience />} />
+            <Route path="education" element={<Education />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="project/:slug" element={<SuspenseWrapper><ProjectDetails /></SuspenseWrapper>} />
           </Route>
 
           {/* Admin Login */}
-          <Route path="/admin/login" element={<Login />} />
+          <Route path="/admin/login" element={<SuspenseWrapper><Login /></SuspenseWrapper>} />
 
           {/* Protected Admin Routes */}
           <Route path="/admin" element={
             <ProtectedRoute>
-              <AdminLayout />
+              <SuspenseWrapper><AdminLayout /></SuspenseWrapper>
             </ProtectedRoute>
           }>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="profile" element={<ManageProfile />} />
-            <Route path="skills" element={<ManageSkills />} />
-            <Route path="projects" element={<ManageProjects />} />
-            <Route path="experience" element={<ManageExperience />} />
-            <Route path="education" element={<ManageEducation />} />
-            <Route path="messages" element={<ManageMessages />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="dashboard" element={<SuspenseWrapper><Dashboard /></SuspenseWrapper>} />
+            <Route path="profile" element={<SuspenseWrapper><ManageProfile /></SuspenseWrapper>} />
+            <Route path="skills" element={<SuspenseWrapper><ManageSkills /></SuspenseWrapper>} />
+            <Route path="projects" element={<SuspenseWrapper><ManageProjects /></SuspenseWrapper>} />
+            <Route path="experience" element={<SuspenseWrapper><ManageExperience /></SuspenseWrapper>} />
+            <Route path="education" element={<SuspenseWrapper><ManageEducation /></SuspenseWrapper>} />
+            <Route path="messages" element={<SuspenseWrapper><ManageMessages /></SuspenseWrapper>} />
+            <Route path="settings" element={<SuspenseWrapper><Settings /></SuspenseWrapper>} />
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
           </Route>
           

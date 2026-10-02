@@ -5,7 +5,7 @@ import Education from '../models/Education.js';
 // @access  Public
 export const getEducation = async (req, res, next) => {
   try {
-    const education = await Education.find({}).sort({ order: 1 });
+    const education = await Education.find({}).sort({ order: 1 }).lean();
     res.json(education);
   } catch (error) {
     next(error);

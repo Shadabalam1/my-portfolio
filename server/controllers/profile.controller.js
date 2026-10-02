@@ -5,7 +5,7 @@ import Profile from '../models/Profile.js';
 // @access  Public
 export const getProfile = async (req, res, next) => {
   try {
-    const profile = await Profile.findOne();
+    const profile = await Profile.findOne().lean();
     if (profile) {
       res.json(profile);
     } else {
@@ -28,6 +28,13 @@ export const updateProfile = async (req, res, next) => {
       profile.name = req.body.name || profile.name;
       profile.title = req.body.title || profile.title;
       profile.heroTagline = req.body.heroTagline !== undefined ? req.body.heroTagline : profile.heroTagline;
+      profile.heroDescription = req.body.heroDescription !== undefined ? req.body.heroDescription : profile.heroDescription;
+      profile.primaryBtnText = req.body.primaryBtnText !== undefined ? req.body.primaryBtnText : profile.primaryBtnText;
+      profile.primaryBtnLink = req.body.primaryBtnLink !== undefined ? req.body.primaryBtnLink : profile.primaryBtnLink;
+      profile.secondaryBtnText = req.body.secondaryBtnText !== undefined ? req.body.secondaryBtnText : profile.secondaryBtnText;
+      profile.secondaryBtnLink = req.body.secondaryBtnLink !== undefined ? req.body.secondaryBtnLink : profile.secondaryBtnLink;
+      profile.availabilityText = req.body.availabilityText !== undefined ? req.body.availabilityText : profile.availabilityText;
+      profile.resumeUrl = req.body.resumeUrl !== undefined ? req.body.resumeUrl : profile.resumeUrl;
       profile.shortBio = req.body.shortBio !== undefined ? req.body.shortBio : profile.shortBio;
       profile.about = req.body.about !== undefined ? req.body.about : profile.about;
       profile.yearsOfExperience = req.body.yearsOfExperience !== undefined ? req.body.yearsOfExperience : profile.yearsOfExperience;
@@ -48,6 +55,7 @@ export const updateProfile = async (req, res, next) => {
       res.status(201).json(profile);
     }
   } catch (error) {
-    next(error);
+    console.error('Update Profile Error:', error);
+    res.status(500).json({ message: error.message, stack: error.stack });
   }
 };

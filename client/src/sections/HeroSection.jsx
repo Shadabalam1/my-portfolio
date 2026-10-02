@@ -1,145 +1,107 @@
 import { motion } from 'framer-motion';
-import { useOutletContext } from 'react-router-dom';
-import { ArrowRight, Download, Mail } from 'lucide-react';
+import { useOutletContext, Link } from 'react-router-dom';
+import { ArrowRight, MapPin } from 'lucide-react';
 
 const HeroSection = () => {
-  const { profile, settings } = useOutletContext();
-
-  const handleNavClick = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
+  const { profile } = useOutletContext();
+  
   return (
-    <section id="home" className="relative min-h-screen flex items-center pt-20 bg-gradient-mesh">
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+    <section id="hero" className="py-16 md:py-32 relative overflow-hidden">
+      <div className="container mx-auto px-6 lg:px-12 max-w-7xl">
+        
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-16 lg:gap-24">
           
           <motion.div 
-            className="flex-1 w-full"
+            className="flex-1 flex flex-col items-start"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3 py-1 mb-8 border border-zinc-800 bg-zinc-900/50 rounded-full text-zinc-400 text-xs font-mono tracking-wider"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              AVAILABLE FOR WORK
-            </motion.div>
+            {profile?.availabilityText && (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-green-50 text-green-700 border border-green-200 mb-8">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                <span className="text-xs font-semibold tracking-wide uppercase">
+                  {profile.availabilityText}
+                </span>
+              </div>
+            )}
             
-            <motion.h1 
-              className="text-5xl md:text-7xl font-bold font-heading text-white mb-6 tracking-tight whitespace-pre-wrap"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-            >
-              {profile?.heroTagline || ''}
-            </motion.h1>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-neutral-900 mb-6 leading-[1.1]">
+              {profile?.heroTagline ? (
+                <span dangerouslySetInnerHTML={{ __html: profile.heroTagline.replace('\n', '<br class="hidden sm:block" />') }} />
+              ) : (
+                <>
+                  Building modern <br className="hidden sm:block" />
+                  software experiences.
+                </>
+              )}
+            </h1>
             
-            <motion.h2 
-              className="text-xl md:text-2xl text-zinc-400 font-medium mb-8 max-w-2xl whitespace-pre-wrap"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-            >
-              {profile?.shortBio || ''}
-            </motion.h2>
+            <p className="text-lg md:text-xl text-neutral-600 max-w-2xl mb-10 leading-relaxed">
+              {profile?.heroDescription || profile?.shortBio || `I'm ${profile?.name || 'Shadab Alam'}, a Software Engineer specializing in the MERN stack. I build robust, scalable applications with clean code and a focus on exceptional user experience.`}
+            </p>
             
-            <motion.div 
-              className="flex flex-wrap items-center gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-            >
-              <button 
-                onClick={() => handleNavClick('projects')}
-                className="px-6 py-3 bg-white text-zinc-950 hover:bg-zinc-200 rounded-md font-semibold transition-colors flex items-center gap-2"
+            <div className="flex flex-wrap items-center gap-4">
+              <Link 
+                to={profile?.primaryBtnLink || "/projects"}
+                className="h-12 px-8 rounded bg-neutral-900 text-white font-medium flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors shadow-sm hover:shadow"
               >
-                View Work <ArrowRight size={18} />
-              </button>
+                {profile?.primaryBtnText || "View Work"} <ArrowRight size={18} />
+              </Link>
               
-              {settings?.resumeUrl && (
+              <Link 
+                to={profile?.secondaryBtnLink || "/contact"}
+                className="h-12 px-8 rounded bg-white border border-neutral-200 text-neutral-900 font-medium flex items-center justify-center hover:bg-neutral-50 transition-colors"
+              >
+                {profile?.secondaryBtnText || "Contact Me"}
+              </Link>
+
+              {profile?.resumeUrl && (
                 <a 
-                  href={settings.resumeUrl} 
-                  target="_blank" 
+                  href={profile.resumeUrl}
+                  target="_blank"
                   rel="noreferrer"
-                  className="px-6 py-3 bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800 rounded-md font-medium transition-colors flex items-center gap-2"
+                  className="h-12 px-8 rounded bg-white border border-neutral-200 text-blue-600 font-medium flex items-center justify-center hover:bg-blue-50 transition-colors"
                 >
-                  <Download size={18} /> Resume
+                  Download CV
                 </a>
               )}
-            </motion.div>
-          </motion.div>
-
-          <motion.div 
-            className="flex-1 flex justify-center md:justify-end w-full md:w-auto"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
-            <div className="relative w-72 h-80 md:w-80 md:h-[450px]">
-              {/* Clean Image container */}
-              <div className="absolute inset-0 rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-900 group">
-                {profile?.profileImage ? (
-                  <img 
-                    src={profile.profileImage} 
-                    alt={profile.name} 
-                    className="w-full h-full object-cover grayscale opacity-80 transition-all duration-500 group-hover:grayscale-0 group-hover:opacity-100"
-                  />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-zinc-700 font-mono">
-                    <span className="text-6xl mb-4">&lt;/&gt;</span>
-                    <span>No image set</span>
-                  </div>
-                )}
+            </div>
+            
+            {profile?.location && (
+              <div className="mt-12 flex items-center gap-2 text-sm text-neutral-500 font-medium">
+                <MapPin size={16} /> Based in {profile.location}
               </div>
-              
-              {/* Floating Tech Badges - Sleek version */}
-              <motion.div 
-                className="absolute top-6 -right-6 bg-zinc-900 border border-zinc-800 px-4 py-2 rounded shadow-xl flex items-center gap-2"
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                <span className="text-white font-mono text-xs tracking-wider">REACT</span>
-              </motion.div>
-              
-              <motion.div 
-                className="absolute bottom-12 -left-8 bg-zinc-900 border border-zinc-800 px-4 py-2 rounded shadow-xl flex items-center gap-2"
-                animate={{ y: [0, 5, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              >
-                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                <span className="text-white font-mono text-xs tracking-wider">NODE.JS</span>
-              </motion.div>
+            )}
+          </motion.div>
+          
+          <motion.div 
+            className="w-full max-w-sm lg:w-1/3 shrink-0"
+            initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          >
+            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-neutral-100 shadow-xl border border-neutral-200 rotate-2 hover:rotate-0 transition-transform duration-500">
+              {profile?.profileImage ? (
+                <img 
+                  src={profile.profileImage} 
+                  alt={profile.name} 
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-neutral-400 p-8 text-center">
+                  Update profile image in admin panel
+                </div>
+              )}
             </div>
           </motion.div>
-
+          
         </div>
       </div>
-
-      {/* Scroll indicator - Minimalist */}
-      <motion.div 
-        className="absolute bottom-10 left-6 md:left-12 flex items-center gap-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
-      >
-        <span className="text-xs text-zinc-500 font-mono uppercase tracking-widest rotate-90 origin-left translate-x-2">Scroll</span>
-        <div className="w-[1px] h-12 bg-zinc-800 overflow-hidden relative">
-          <motion.div 
-            className="w-full h-1/2 bg-zinc-500"
-            animate={{ y: [-24, 48] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-          />
-        </div>
-      </motion.div>
     </section>
   );
 };

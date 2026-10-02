@@ -5,7 +5,7 @@ import Project from '../models/Project.js';
 // @access  Public
 export const getProjects = async (req, res, next) => {
   try {
-    const projects = await Project.find({}).sort({ order: 1 });
+    const projects = await Project.find({}).sort({ order: 1 }).lean();
     res.json(projects);
   } catch (error) {
     next(error);
@@ -17,7 +17,7 @@ export const getProjects = async (req, res, next) => {
 // @access  Public
 export const getProjectBySlug = async (req, res, next) => {
   try {
-    const project = await Project.findOne({ slug: req.params.slug });
+    const project = await Project.findOne({ slug: req.params.slug }).lean();
     if (project) {
       res.json(project);
     } else {

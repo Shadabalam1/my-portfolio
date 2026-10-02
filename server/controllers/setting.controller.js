@@ -5,7 +5,7 @@ import Setting from '../models/Setting.js';
 // @access  Public
 export const getSettings = async (req, res, next) => {
   try {
-    const settings = await Setting.findOne();
+    const settings = await Setting.findOne().lean();
     if (settings) {
       res.json(settings);
     } else {

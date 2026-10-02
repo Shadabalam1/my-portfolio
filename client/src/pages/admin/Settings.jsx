@@ -35,6 +35,11 @@ const Settings = () => {
           setFormData({
             siteTitle: settingsRes.data.siteTitle || '',
             siteDescription: settingsRes.data.siteDescription || '',
+            seoMetaTitle: settingsRes.data.seoMetaTitle || '',
+            seoMetaDescription: settingsRes.data.seoMetaDescription || '',
+            seoOgImage: settingsRes.data.seoOgImage || '',
+            contactHeading: settingsRes.data.contactHeading || '',
+            contactDescription: settingsRes.data.contactDescription || '',
             footerText: settingsRes.data.footerText || '',
             contactEmail: settingsRes.data.contactEmail || '',
             resumeUrl: settingsRes.data.resumeUrl || '',
@@ -141,15 +146,69 @@ const Settings = () => {
               />
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Site Description (SEO Meta)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Site Description (General)</label>
                 <textarea 
                   name="siteDescription" 
                   value={formData.siteDescription} 
                   onChange={handleInputChange}
                   rows={2}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-400 focus:outline-none"
-                  placeholder="A brief description of your portfolio for search engines"
+                  placeholder="A brief description of your portfolio"
                 ></textarea>
+              </div>
+
+              <div className="pt-4 border-t">
+                <h3 className="text-lg font-medium mb-4">SEO Configurations</h3>
+                <Input 
+                  label="SEO Meta Title" 
+                  name="seoMetaTitle" 
+                  value={formData.seoMetaTitle} 
+                  onChange={handleInputChange} 
+                  placeholder="Shadab Alam | Software Engineer" 
+                />
+                
+                <div className="mt-4 mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">SEO Meta Description</label>
+                  <textarea 
+                    name="seoMetaDescription" 
+                    value={formData.seoMetaDescription} 
+                    onChange={handleInputChange}
+                    rows={2}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-400 focus:outline-none"
+                    placeholder="Professional portfolio of Shadab Alam..."
+                  ></textarea>
+                </div>
+                
+                <Input 
+                  label="SEO OG Image URL" 
+                  name="seoOgImage" 
+                  value={formData.seoOgImage} 
+                  onChange={handleInputChange} 
+                  placeholder="https://... (Image for social sharing)" 
+                />
+              </div>
+
+              <div className="pt-4 border-t">
+                <h3 className="text-lg font-medium mb-4">Contact Section Configurations</h3>
+                <Input 
+                  label="Contact Heading" 
+                  name="contactHeading" 
+                  value={formData.contactHeading} 
+                  onChange={handleInputChange} 
+                  placeholder="Let's talk." 
+                />
+                
+                <div className="mt-4 mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact Description</label>
+                  <textarea 
+                    name="contactDescription" 
+                    value={formData.contactDescription} 
+                    onChange={handleInputChange}
+                    rows={2}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-400 focus:outline-none"
+                    placeholder="Whether you have a question..."
+                  ></textarea>
+                </div>
               </div>
 
               <Input 

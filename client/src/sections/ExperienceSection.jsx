@@ -1,127 +1,96 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, Calendar, MapPin } from 'lucide-react';
 import api from '../utils/api';
+import { Briefcase } from 'lucide-react';
 
 const ExperienceSection = () => {
   const [experiences, setExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchExperiences = async () => {
+    const fetchExperience = async () => {
       try {
         const { data } = await api.get('/experience');
-        setExperiences(data.filter(exp => exp.published));
+        setExperiences(data.sort((a, b) => a.order - b.order));
       } catch (error) {
-        console.error('Failed to fetch experiences', error);
+        console.error('Failed to fetch experience', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchExperiences();
+    fetchExperience();
   }, []);
 
-  if (loading) return null;
-  if (experiences.length === 0) return null; // Don't show if empty per requirements
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  };
+
+  if (loading || experiences.length === 0) return null;
 
   return (
-    <section id="experience" className="py-24 bg-zinc-950 relative border-t border-zinc-900">
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
+    <section id="experience" className="py-24 bg-white relative border-t border-neutral-100">
+      <div className="container mx-auto px-6 lg:px-12 max-w-5xl">
         
         <motion.div 
-          className="mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6 }}
+          className="mb-20"
         >
           <div className="flex items-center gap-4 mb-4">
-            <span className="text-zinc-500 font-mono text-sm tracking-widest uppercase">04 // Experience</span>
-            <div className="h-[1px] w-12 bg-zinc-800"></div>
+            <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600">
+              <Briefcase size={24} />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-neutral-900">
+              Experience
+            </h2>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold font-heading text-white">
-            Professional <span className="text-zinc-500">Journey.</span>
-          </h2>
         </motion.div>
 
-        <div className="max-w-4xl mx-auto relative mt-20">
-          {/* Minimal Vertical Line */}
-          <div className="absolute left-[7px] md:left-1/2 top-0 bottom-0 w-px bg-zinc-800 md:-translate-x-1/2"></div>
-          
-          <div className="space-y-16">
-            {experiences.map((exp, index) => {
-              const isEven = index % 2 === 0;
-              return (
-                <motion.div 
-                  key={exp._id}
-                  className={`relative flex flex-col md:flex-row items-start md:items-center ${isEven ? 'md:flex-row-reverse' : ''}`}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.6, delay: 0.1 * index }}
-                >
-                  {/* Timeline Dot */}
-                  <div className="absolute left-0 md:left-1/2 w-4 h-4 rounded-full bg-emerald-500 border-4 border-zinc-950 md:-translate-x-1/2 mt-1.5 md:mt-0 z-10"></div>
-                  
-                  <div className="hidden md:block md:w-1/2"></div>
-                  
-                  {/* Content */}
-                  <div className={`w-full md:w-1/2 pl-8 md:pl-0 ${isEven ? 'md:pr-16' : 'md:pl-16'}`}>
-                    <div className="bg-transparent group">
-                      
-                      <h3 className="text-2xl font-bold text-zinc-100 font-heading mb-1">{exp.jobTitle}</h3>
-                      <h4 className="text-lg text-emerald-400 font-medium mb-4">{exp.company}</h4>
-                      
-                      <div className="flex flex-col sm:flex-row gap-4 mb-6 text-sm text-zinc-500 font-mono tracking-wide">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar size={14} />
-                          <span>
-                            {new Date(exp.startDate).toLocaleDateString(undefined, {month: 'short', year: 'numeric'})} - 
-                            {exp.endDate ? new Date(exp.endDate).toLocaleDateString(undefined, {month: 'short', year: 'numeric'}) : ' Present'}
-                          </span>
-                        </div>
-                        {exp.location && (
-                          <div className="flex items-center gap-1.5">
-                            <MapPin size={14} />
-                            <span>{exp.location}</span>
-                          </div>
-                        )}
-                      </div>
-                      
-                      {exp.description && (
-                        <p className="text-zinc-400 text-sm leading-relaxed mb-4">
-                          {exp.description}
-                        </p>
-                      )}
-                      
-                      {exp.responsibilities && exp.responsibilities.length > 0 && (
-                        <ul className="space-y-2 mb-6">
-                          {exp.responsibilities.map((resp, i) => (
-                            <li key={i} className="text-sm text-zinc-400 flex items-start gap-3">
-                              <span className="text-emerald-500 mt-1 flex-shrink-0 text-[10px]">▹</span>
-                              <span>{resp}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                      
-                      {exp.technologies && exp.technologies.length > 0 && (
-                        <div className="flex flex-wrap gap-2 pt-4">
-                          {exp.technologies.map((tech, i) => (
-                            <span key={i} className="text-[10px] font-mono tracking-widest px-2 py-1 bg-zinc-900 text-zinc-400 rounded border border-zinc-800 uppercase">
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      
-                    </div>
+        <div className="space-y-4">
+          {experiences.map((exp, idx) => (
+            <motion.div 
+              key={exp._id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+              className="group relative grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-8 p-6 md:p-8 rounded-3xl transition-all duration-500 hover:bg-neutral-50/80 border border-transparent hover:border-neutral-200/60"
+            >
+              <div className="md:col-span-1 pt-1 md:pr-4">
+                <div className="text-sm font-bold text-neutral-400 uppercase tracking-widest mb-2">
+                  {formatDate(exp.startDate)} — {exp.current ? 'Present' : formatDate(exp.endDate)}
+                </div>
+                <div className="text-lg font-bold text-neutral-900">
+                  {exp.company}
+                </div>
+              </div>
+              
+              <div className="md:col-span-3 flex flex-col">
+                <h3 className="text-2xl font-bold text-neutral-900 mb-4 group-hover:text-blue-600 transition-colors">
+                  {exp.role}
+                </h3>
+                <p className="text-neutral-600 leading-relaxed mb-6">
+                  {exp.description}
+                </p>
+                
+                {exp.technologies && exp.technologies.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-auto pt-2">
+                    {exp.technologies.map((tech, i) => (
+                      <span key={i} className="text-xs font-bold px-3 py-1.5 bg-white border border-neutral-200 text-neutral-700 rounded-lg group-hover:border-neutral-300 transition-colors">
+                        {tech}
+                      </span>
+                    ))}
                   </div>
-                </motion.div>
-              );
-            })}
-          </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
         </div>
+        
       </div>
     </section>
   );

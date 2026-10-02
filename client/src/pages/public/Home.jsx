@@ -1,3 +1,4 @@
+import PageWrapper from '../../components/public/PageWrapper';
 import HeroSection from '../../sections/HeroSection';
 import AboutSection from '../../sections/AboutSection';
 import SkillsSection from '../../sections/SkillsSection';
@@ -8,15 +9,20 @@ import ContactSection from '../../sections/ContactSection';
 
 const Home = () => {
   return (
-    <div className="bg-gray-950">
-      <HeroSection />
-      <AboutSection />
-      <SkillsSection />
-      <ProjectsSection />
-      <ExperienceSection />
-      <EducationSection />
-      <ContactSection />
-    </div>
+    <PageWrapper 
+      title="Shadab Alam | Software Engineer & Web Developer"
+      description="Professional portfolio of Shadab Alam, a Software Engineer & MERN Stack Developer."
+    >
+      <div className="w-full">
+        <HeroSection />
+        <AboutSection />
+        <SkillsSection />
+        <ProjectsSection />
+        <ExperienceSection />
+        <EducationSection />
+        <ContactSection />
+      </div>
+    </PageWrapper>
   );
 };
 

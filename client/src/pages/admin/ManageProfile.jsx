@@ -8,12 +8,20 @@ const ManageProfile = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingResume, setUploadingResume] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',
     title: '',
     shortBio: '',
     heroTagline: '',
+    heroDescription: '',
+    primaryBtnText: '',
+    primaryBtnLink: '',
+    secondaryBtnText: '',
+    secondaryBtnLink: '',
+    availabilityText: '',
+    resumeUrl: '',
     about: '',
     yearsOfExperience: 0,
     projectsCompleted: 0,
@@ -35,6 +43,13 @@ const ManageProfile = () => {
             title: data.title || '',
             shortBio: data.shortBio || '',
             heroTagline: data.heroTagline || '',
+            heroDescription: data.heroDescription || '',
+            primaryBtnText: data.primaryBtnText || '',
+            primaryBtnLink: data.primaryBtnLink || '',
+            secondaryBtnText: data.secondaryBtnText || '',
+            secondaryBtnLink: data.secondaryBtnLink || '',
+            availabilityText: data.availabilityText || '',
+            resumeUrl: data.resumeUrl || '',
             about: data.about || '',
             yearsOfExperience: data.yearsOfExperience || 0,
             projectsCompleted: data.projectsCompleted || 0,
@@ -82,6 +97,28 @@ const ManageProfile = () => {
     }
   };
 
+  const handleResumeUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const data = new FormData();
+    data.append('file', file);
+    data.append('folder', 'portfolio/resume');
+
+    try {
+      setUploadingResume(true);
+      const res = await api.post('/upload', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setFormData({ ...formData, resumeUrl: res.data.url });
+    } catch (error) {
+      console.error('Upload failed', error);
+      alert(`Resume upload failed: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setUploadingResume(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -90,7 +127,7 @@ const ManageProfile = () => {
       alert('Profile updated successfully');
     } catch (error) {
       console.error('Failed to save profile', error);
-      alert('Failed to update profile');
+      alert(`Failed to update profile: ${error.response?.data?.message || error.message}`);
     } finally {
       setSaving(false);
     }
@@ -145,19 +182,54 @@ const ManageProfile = () => {
                     onChange={handleInputChange}
                     rows={2}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-400 focus:outline-none"
-                    placeholder="Building digital products, brands, and experiences."
+                    placeholder="Engineering digital excellence."
                   ></textarea>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Short Bio (Hero Section)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Hero Description</label>
                   <textarea 
-                    name="shortBio" 
-                    value={formData.shortBio} 
+                    name="heroDescription" 
+                    value={formData.heroDescription} 
                     onChange={handleInputChange}
-                    rows={2}
+                    rows={3}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-400 focus:outline-none"
+                    placeholder="I build high-performance web applications..."
                   ></textarea>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <Input label="Primary Button Text" name="primaryBtnText" value={formData.primaryBtnText} onChange={handleInputChange} placeholder="Explore Projects" />
+                  <Input label="Primary Button Link" name="primaryBtnLink" value={formData.primaryBtnLink} onChange={handleInputChange} placeholder="/projects" />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <Input label="Secondary Button Text" name="secondaryBtnText" value={formData.secondaryBtnText} onChange={handleInputChange} placeholder="Get in touch" />
+                  <Input label="Secondary Button Link" name="secondaryBtnLink" value={formData.secondaryBtnLink} onChange={handleInputChange} placeholder="/contact" />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <Input label="Availability Badge Text" name="availabilityText" value={formData.availabilityText} onChange={handleInputChange} placeholder="Available for work" />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Resume (PDF)</label>
+                    <div className="flex gap-2 items-center">
+                      <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded border border-gray-300 text-sm whitespace-nowrap">
+                        {uploadingResume ? 'Uploading...' : 'Upload PDF'}
+                        <input 
+                          type="file" 
+                          accept=".pdf,application/pdf" 
+                          onChange={handleResumeUpload} 
+                          className="hidden"
+                          disabled={uploadingResume}
+                        />
+                      </label>
+                      {formData.resumeUrl && (
+                        <a href={formData.resumeUrl} target="_blank" rel="noreferrer" className="text-sm text-blue-600 hover:underline truncate">
+                          View Current
+                        </a>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

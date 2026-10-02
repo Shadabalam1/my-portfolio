@@ -5,7 +5,7 @@ import Experience from '../models/Experience.js';
 // @access  Public
 export const getExperience = async (req, res, next) => {
   try {
-    const experiences = await Experience.find({}).sort({ order: 1 });
+    const experiences = await Experience.find({}).sort({ order: 1 }).lean();
     res.json(experiences);
   } catch (error) {
     next(error);

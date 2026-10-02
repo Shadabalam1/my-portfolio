@@ -5,7 +5,7 @@ import Skill from '../models/Skill.js';
 // @access  Public
 export const getSkills = async (req, res, next) => {
   try {
-    const skills = await Skill.find({}).sort({ order: 1 });
+    const skills = await Skill.find({}).sort({ order: 1 }).lean();
     res.json(skills);
   } catch (error) {
     next(error);

@@ -12,10 +12,22 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
 });
 
-const uploadToCloudinary = (buffer, folder = 'portfolio') => {
+const uploadToCloudinary = (buffer, folder = 'portfolio', originalname = '') => {
   return new Promise((resolve, reject) => {
+    const resourceType = folder.includes('resume') ? 'raw' : 'auto';
+    
+    const options = {
+      folder: folder,
+      resource_type: resourceType,
+    };
+
+    if (resourceType === 'raw' && originalname) {
+      const ext = originalname.split('.').pop();
+      options.public_id = `resume_${Date.now()}.${ext}`;
+    }
+
     const cld_upload_stream = cloudinary.uploader.upload_stream(
-      { folder: folder, resource_type: 'auto' },
+      options,
       (error, result) => {
         if (result) {
           resolve(result);
@@ -35,7 +47,7 @@ router.post('/', protect, upload.single('file'), async (req, res) => {
     }
 
     const folder = req.body.folder || 'portfolio';
-    const result = await uploadToCloudinary(req.file.buffer, folder);
+    const result = await uploadToCloudinary(req.file.buffer, folder, req.file.originalname);
 
     res.status(200).json({
       message: 'File uploaded successfully',

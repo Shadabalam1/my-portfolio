@@ -11,7 +11,7 @@ const experienceSchema = new mongoose.Schema({
   responsibilities: [{ type: String }],
   technologies: [{ type: String }],
   published: { type: Boolean, default: true },
-  order: { type: Number, default: 0 },
+  order: { type: Number, default: 0, index: true },
 }, { timestamps: true });
 
 const Experience = mongoose.model('Experience', experienceSchema);

@@ -1,4 +1,5 @@
 import Message from '../models/Message.js';
+import sendEmail from '../utils/sendEmail.js';
 
 // @desc    Get all messages
 // @route   GET /api/messages
@@ -36,6 +37,28 @@ export const createMessage = async (req, res, next) => {
   try {
     const message = new Message(req.body);
     const createdMessage = await message.save();
+
+    // Send email notification if configured
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      try {
+        await sendEmail({
+          subject: `New Portfolio Message from ${createdMessage.name}`,
+          message: `You have received a new message from your portfolio website.\n\nName: ${createdMessage.name}\nEmail: ${createdMessage.email}\n\nMessage:\n${createdMessage.message}`,
+          html: `
+            <h3>New Contact Message</h3>
+            <p><strong>Name:</strong> ${createdMessage.name}</p>
+            <p><strong>Email:</strong> ${createdMessage.email}</p>
+            <hr/>
+            <p><strong>Message:</strong></p>
+            <p>${createdMessage.message.replace(/\n/g, '<br/>')}</p>
+          `
+        });
+      } catch (emailError) {
+        console.error('Error sending email notification:', emailError);
+        // Do not fail the request if email fails, just log it
+      }
+    }
+
     res.status(201).json(createdMessage);
   } catch (error) {
     next(error);
