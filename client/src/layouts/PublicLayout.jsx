@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import Navbar from '../components/public/Navbar';
 import Footer from '../components/public/Footer';
+import Loader from '../components/public/Loader';
 import api from '../utils/api';
 
 const PublicLayout = () => {
@@ -33,16 +34,9 @@ const PublicLayout = () => {
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-white text-neutral-900">
-        <div className="animate-pulse text-lg font-medium tracking-tight">Loading...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="public-theme bg-white min-h-screen text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white flex flex-col">
+      <Loader isLoading={loading} />
       <Navbar profile={profile} settings={settings} />
       <AnimatePresence mode="wait">
         <motion.main 
